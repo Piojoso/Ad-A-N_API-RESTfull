@@ -36,10 +36,14 @@ const subirArchivo = (req, res) =>{
     ubicacion = './upload/' + archivosSubidos.name;
     archivo.location = ubicacion;
     archivosSubidos.mv(ubicacion);
+    let date = new Date;
+    archivo.add_Date = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+    archivo.add_Date += " " + date.getHours() + ":" + date.getMinutes();
 
     archivo.save((err, archivoGuardado)=>{
         if(err) res.status(500).send({message: `Error al guardar en la DB: ${err}`});
         res.status(200).send(archivoGuardado);
+        console.log(archivoGuardado)
     });
 }
 

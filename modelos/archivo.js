@@ -7,7 +7,8 @@ const ArchivoSchema = schema({
     name: String,
     size: Number,
     type: String,
-    location: String
+    location: String,
+    add_Date: String
 });
 
 module.exports = mongoose.model('Archivo', ArchivoSchema);
