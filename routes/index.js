@@ -8,7 +8,9 @@ const api = express.Router();
 
 // Archivos
 api.get('/archivo', archivoCtrl.getArchivos); // Responder con todos los Archivos
-api.get('/archivo/:fileID', archivoCtrl.getArchivo); // Responder con un unico Archivo
+api.get('/archivo/info/:fileID', archivoCtrl.getArchivo); // Responder con INFO de un unico Archivo
+api.get('/archivo/find/:fileName', archivoCtrl.buscarArchivo); // Responde con una lista de todos los archivos que hagan match con el nombre enviado
+api.get('/archivo/file/:fileID', archivoCtrl.descargarArchivo); // Responder con el archivo, para su descarga.
 api.post('/archivo',/* multipartMiddelware,*/ archivoCtrl.subirArchivo); // subir un Archivo
 // api.put('/archivo/:fileID', archivoCtrl.actualizarArchivo); // Actualizar nombre de un Archivo (No funciona, es muy complicado, por la maldita extension )
 api.delete('/archivo/:fileID', archivoCtrl.borrarArchivo); // Borrar un Archivo

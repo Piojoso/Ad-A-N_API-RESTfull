@@ -3,6 +3,7 @@
 const Archivo = require('../modelos/archivo');
 const fs = require('fs');
 
+// Responder con todos los Archivos
 const getArchivos = (req, res) =>{
     Archivo.find({},(err, archivos)=>{
         if(err) return res.status(500).send({message: `Error al realizar la peticion: ${err}`});
@@ -11,7 +12,31 @@ const getArchivos = (req, res) =>{
     });
 };
 
+// Responder con INFO de un unico Archivo
 const getArchivo = (req, res) =>{
+    let archivoID = req.params.fileID;
+
+    Archivo.findById(archivoID, (err, archivo)=>{
+        if(err) return res.status(500).send({message: `Error al realizar la peticion: ${err}`});
+        if(!archivo) return res.status(404).send({message: 'El archivo no existe en la Base de Datos'});
+        res.status(200).send(archivo);
+    });
+};
+
+// Responde con una lista de todos los archivos que hagan match con el nombre enviado
+const buscarArchivo = (req, res) => {
+    let archivoName = req.params.fileName;
+    let expresion = new RegExp(archivoName,'i');
+
+    Archivo.find({'name':expresion},(err, archivos)=>{
+        if(err) return res.status(500).send({message: `Error al realizar la peticion: ${err}`});
+        if(!archivos) return res.status(404).send({message: 'No se encontro ningun archivo en la Base de Datos con el nombre brindado'});
+        res.status(200).send(archivos);
+    });
+}
+
+// Responder con el archivo, para su descarga.
+const descargarArchivo = (req, res) =>{
     let archivoID = req.params.fileID;
 
     Archivo.findById(archivoID, (err, archivo)=>{
@@ -21,8 +46,9 @@ const getArchivo = (req, res) =>{
             if(err) return res.status(404).send({message: `Error al buscar el archivo en el directorio, puede que el archivo halla sido movido o eliminado, intentelo de nuevo mas tarde: ${err}`})
         });
     });
-};
+}
 
+// subir un Archivo
 const subirArchivo = (req, res) =>{
     if(!req.files) res.status(false).send({message:'Archivo no Subido'});
     
@@ -43,7 +69,6 @@ const subirArchivo = (req, res) =>{
     archivo.save((err, archivoGuardado)=>{
         if(err) res.status(500).send({message: `Error al guardar en la DB: ${err}`});
         res.status(200).send(archivoGuardado);
-        console.log(archivoGuardado)
     });
 }
 
@@ -59,6 +84,7 @@ const actualizarArchivo = (req, res)=>{
 }
 */
 
+// Borrar un Archivo
 const borrarArchivo = (req, res)=>{
     let archivoID = req.params.fileID;
     Archivo.findById(archivoID, (err, archivo)=>{
@@ -77,6 +103,8 @@ const borrarArchivo = (req, res)=>{
 module.exports = {
     getArchivos,
     getArchivo,
+    buscarArchivo,
+    descargarArchivo,
     subirArchivo,
     //actualizarArchivo,
     borrarArchivo
