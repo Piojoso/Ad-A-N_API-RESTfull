@@ -50,7 +50,7 @@ const descargarArchivo = (req, res) =>{
 
 // subir un Archivo
 const subirArchivo = (req, res) =>{
-    if(!req.files) res.status(false).send({message:'Archivo no Subido'});
+    if(!req.files) return res.status(500).send({message:'Archivo no Subido'});
     
     let archivo = new Archivo();
     let archivosSubidos = req.files.archivos;
