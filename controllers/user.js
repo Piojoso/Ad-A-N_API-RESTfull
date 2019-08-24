@@ -15,19 +15,18 @@ const signUp = (req, res) =>{
         if(err) return res.status(500).send({message: `Error al crear el usuario: ${err}`});
         
         return res.status(201).send({token: service.createToken(user)});
-    })
+    });
 }
 
 const signIn = (req, res) =>{
-    User.find({ email: req.body.email }, (err, user) =>{
+    User.findOne({ email: req.body.email }).select('password').exec((err, user) =>{
         if(err) return res.status(500).send({message: `Hubo un error al buscar el usuario: ${err}`});
         if(!user) return res.status(404).send({message: 'No existe el usuario'});
-        req.user = user;
-        res.status(200).send({
-            message: 'Inicio de Sesion completado',
-            token: service.createToken(user)
-        })
-    })
+        if(req.body.password === user.password){
+            res.status(200).send({token: service.createToken(user)});
+        }
+        else return res.status(401).send({message: 'Contraseña Erronea'});
+    });
 }
 
 module.exports = {
