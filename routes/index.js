@@ -7,13 +7,13 @@ const auth = require('../middlewares/auth');
 const api = express.Router();
 
 // Archivos
-api.get('/archivo', archivoCtrl.getArchivos); // Responder con todos los Archivos
-api.get('/archivo/info/:fileID', archivoCtrl.getArchivo); // Responder con INFO de un unico Archivo
-api.get('/archivo/find/:fileName', archivoCtrl.buscarArchivo); // Responde con una lista de todos los archivos que hagan match con el nombre enviado
+api.get('/archivo', auth, archivoCtrl.getArchivos); // Responder con todos los Archivos
+api.get('/archivo/info/:fileID', auth, archivoCtrl.getArchivo); // Responder con INFO de un unico Archivo
+api.get('/archivo/find/:fileName', auth, archivoCtrl.buscarArchivo); // Responde con una lista de todos los archivos que hagan match con el nombre enviado
 api.get('/archivo/file/:fileID', archivoCtrl.descargarArchivo); // Responder con el archivo, para su descarga.
-api.post('/archivo',/* multipartMiddelware,*/ archivoCtrl.subirArchivo); // subir un Archivo
+api.post('/archivo', auth, archivoCtrl.subirArchivo); // subir un Archivo
 // api.put('/archivo/:fileID', archivoCtrl.actualizarArchivo); // Actualizar nombre de un Archivo (No funciona, es muy complicado, por la maldita extension )
-api.delete('/archivo/:fileID', archivoCtrl.borrarArchivo); // Borrar un Archivo
+api.delete('/archivo/:fileID', auth, archivoCtrl.borrarArchivo); // Borrar un Archivo
 
 // User
 api.post('/signup', userCtrl.signUp);
