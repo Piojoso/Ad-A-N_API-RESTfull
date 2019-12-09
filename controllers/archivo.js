@@ -75,17 +75,56 @@ const subirArchivo = (req, res) =>{
     });
 }
 
-//Idea para cambiarle el nombre, es muy complicado, toma mucho tiempo, por ahora no lo hare
-/*
+// Actualizar archivo, de uno viejo a uno mas nuevo.
+
 const actualizarArchivo = (req, res)=>{
     let archivoID = req.params.fileID;
-    let update = req.body;
-    Archivo.findByIdAndUpdate(archivoID, update, (err, archivoActualizado) =>{
-        if(err) return res.status(500).send({message:`Error al actualizar el producto: ${err}`});
-        res.status(200).send({archivoActualizado});
-    })
+    if(!req.files) return res.status(500).send({message:'Archivo no Subido'});
+
+    /** FUNCIONAMIENTO:
+     * Primero deberia buscar que el archivo a cambiar exista --- HECHO
+     * Ver que el usuario tenga permiso sobre ese archivo --- HECHO
+     * Obtener toda la nueva info del archivo reemplazador --- HECHO
+     * Eliminar archivo anterior --- HECHO
+     * Modifico el objeto anterior para luego updatear la db --- HECHO
+     * Colocar archivo nuevo --- HECHO
+     * Updatear la DB. --- HECHO
+     */
+
+    Archivo.findById(archivoID, (err, archivoViejo) => {
+        // Primero deberia buscar que el archivo a cambiar exista
+        if(err) return res.status(404).send({message: `Archivo no encontrado: ${err}`});
+        // Ver que el usuario tenga permiso sobre ese archivo
+        if(archivoViejo.user != req.user) return res.status(403).send({message: 'No cuenta con los permisos para ver la info de este archivo'});
+
+        // Obtener toda la nueva info del archivo reemplazador
+        let archivoReemplazador = req.files.archivos;
+
+        // Eliminar archivo anterior
+        fs.unlink(archivoViejo.location, (err)=>{
+            if(err) return res.status(500).send({message:`Hubo un error al intentar Borrar el archivo en el servidor`});
+
+            // Modifico el objeto anterior para luego updatear la db
+            let ubicacion = './upload/' + req.user + '/' + archivosReemplazador.name;
+            let date = new Date.getDate() + "/" + (Date.getMonth() + 1) + "/" + Date.getFullYear() + " " + Date.getHours() + ":" + Date.getMinutes();
+            
+            archivoViejo.name = archivoReemplazador.name;
+            archivoViejo.size = archivoReemplazador.size;
+            archivoViejo.type = archivoReemplazador.mimeTipe;
+            archivoViejo.location = ubicacion;
+            archivoViejo.add_Date = date;
+
+            // Colocar archivo nuevo
+            archivosReemplazador.mv(ubicacion);
+
+            // Updatear la DB.
+            Archivo.findByIdAndUpdate(archivoID, archivoViejo, (err, archivoActualizado) =>{
+                if(err) return res.status(500).send({message:`Error al actualizar el producto: ${err}`});
+                res.status(200).send({archivoActualizado});
+            });
+        });
+    });
 }
-*/
 
 // Borrar un Archivo
 const borrarArchivo = (req, res)=>{
@@ -114,6 +153,6 @@ module.exports = {
     buscarArchivo,
     descargarArchivo,
     subirArchivo,
-    //actualizarArchivo,
+    actualizarArchivo,
     borrarArchivo
 }

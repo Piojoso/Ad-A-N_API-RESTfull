@@ -12,7 +12,7 @@ api.get('/archivo/info/:fileID', auth, archivoCtrl.getArchivo); // Responder con
 api.get('/archivo/find/:fileName', auth, archivoCtrl.buscarArchivo); // Responde con una lista de todos los archivos que hagan match con el nombre enviado
 api.get('/archivo/file/:fileID', archivoCtrl.descargarArchivo); // Responder con el archivo, para su descarga.
 api.post('/archivo', auth, archivoCtrl.subirArchivo); // subir un Archivo
-// api.put('/archivo/:fileID', archivoCtrl.actualizarArchivo); // Actualizar nombre de un Archivo (No funciona, es muy complicado, por la maldita extension )
+api.put('/archivo/:fileID', auth, archivoCtrl.actualizarArchivo); // Actualizar un archivo viejo con uno nuevo.
 api.delete('/archivo/:fileID', auth, archivoCtrl.borrarArchivo); // Borrar un Archivo
 
 // User
