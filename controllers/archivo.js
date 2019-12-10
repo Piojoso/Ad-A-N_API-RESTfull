@@ -105,8 +105,9 @@ const actualizarArchivo = (req, res)=>{
             if(err) return res.status(500).send({message:`Hubo un error al intentar Borrar el archivo en el servidor`});
 
             // Modifico el objeto anterior para luego updatear la db
-            let ubicacion = './upload/' + req.user + '/' + archivosReemplazador.name;
-            let date = new Date.getDate() + "/" + (Date.getMonth() + 1) + "/" + Date.getFullYear() + " " + Date.getHours() + ":" + Date.getMinutes();
+            let ubicacion = './upload/' + req.user + '/' + archivoReemplazador.name;
+            let date = new Date();
+            let fecha = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes();
             
             archivoViejo.name = archivoReemplazador.name;
             archivoViejo.size = archivoReemplazador.size;
@@ -115,7 +116,7 @@ const actualizarArchivo = (req, res)=>{
             archivoViejo.add_Date = date;
 
             // Colocar archivo nuevo
-            archivosReemplazador.mv(ubicacion);
+            archivoReemplazador.mv(ubicacion);
 
             // Updatear la DB.
             Archivo.findByIdAndUpdate(archivoID, archivoViejo, (err, archivoActualizado) =>{
